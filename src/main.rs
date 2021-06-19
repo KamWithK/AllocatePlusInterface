@@ -11,6 +11,7 @@ async fn main() -> WebDriverResult<()> {
     let mut chrome_driver = DesiredCapabilities::chrome();
     let browser_profile_dir = PathBuf::from("browser_profile").canonicalize().unwrap();
     chrome_driver.add_chrome_arg(&format!("user-data-dir={}", browser_profile_dir.to_str().unwrap().trim_start_matches("\\\\?\\")))?;
+    chrome_driver.set_headless()?;
 
     let browser = Browse::build_browser(&chrome_driver).await;
 
