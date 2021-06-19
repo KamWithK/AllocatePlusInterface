@@ -15,9 +15,9 @@ async fn main() -> WebDriverResult<()> {
     let browser = Browse::build_browser(&chrome_driver).await;
 
     let (username, password, auth_key) = ("", "", "");
-    browser.login(&username, &password, &auth_key).await?;
+    let session = browser.login(&username, &password, &auth_key).await?;
 
-    let raw_data = browser.preload_all().await?;
+    let raw_data = browser.get_data(session).await?;
     browser.driver.quit().await?;
     parse(raw_data, "S2-01");
 
