@@ -8,10 +8,10 @@ pub struct Unit {
 
 pub struct Group {
     pub name: String,
-    pub preferences: Vec<Preference>
+    pub activities: Vec<Activity>
 }
 
-pub struct Preference {
+pub struct Activity {
     pub days: Vec<NaiveDateTime>,
     pub popularity: f64
 }
@@ -32,21 +32,21 @@ impl Unit {
 
 impl Group {
     pub fn parse_group(group: &str, values: Value) -> Group {
-        // Get preferences
-        let filter_preferences = |(_, values): &(&String, &Value)| values.get("selectable").unwrap() != "available";
-        let parse_preferences = |(_, values): (_, &Value)| Preference::parse_preference(values.to_owned());
-        let preferences: Vec<Preference> = values.get("activities").unwrap().as_object().unwrap().iter().filter(filter_preferences).map(parse_preferences).collect();
+        // Get activities
+        let filter_activities = |(_, values): &(&String, &Value)| values.get("selectable").unwrap() != "available";
+        let parse_activities = |(_, values): (_, &Value)| Activity::parse_activity(values.to_owned());
+        let activities: Vec<Activity> = values.get("activities").unwrap().as_object().unwrap().iter().filter(filter_activities).map(parse_activities).collect();
 
         // Create group
         Group {
             name: group.to_string(),
-            preferences
+            activities
         }
     }
 }
 
-impl Preference {
-    pub fn parse_preference(values: Value) -> Preference {
+impl Activity {
+    pub fn parse_activity(values: Value) -> Activity {
         // Parse dates and times
         let days = values.get("activitiesDays").unwrap().as_array().unwrap();
         let time = values.get("start_time").unwrap().as_str().unwrap();
@@ -54,8 +54,8 @@ impl Preference {
         let to_date = |value: &Value| NaiveDateTime::parse_from_str(&format!("{}-{}", value.as_str().unwrap(), time), "%d/%m/%Y-%H:%M").unwrap();
         let days = days.iter().map(to_date).collect();
     
-        // Create preference
-        Preference {
+        // Create activity
+        Activity {
             days: days,
             popularity: 0.
         }
