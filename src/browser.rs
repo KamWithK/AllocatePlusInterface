@@ -7,7 +7,6 @@ pub struct Browse {
     pub driver: WebDriver
 }
 
-#[derive(Clone)]
 pub struct SessionInfo {
     pub student_number: String,
     pub session_ss: String
@@ -47,11 +46,12 @@ impl Browse {
         }
     }
 
-    fn get_request(session: SessionInfo, unit: &str, group: &str) -> String {
+    fn get_request(session: &SessionInfo, field: &str, unit: &str, group: &str) -> String {
         let url = format!(
-            "https://my-timetable.monash.edu/odd/rest/student/{}/subject/{}/group/{}/activities/?ss={}",
-            session.student_number, unit, group, session.session_ss
+            "rest/student/{}/subject/{}/group/{}/{}/?ss={}",
+            session.student_number, unit, group, field, session.session_ss
         );
+
         format!("return await (await fetch('{}')).json()", url)
     }
 
@@ -67,8 +67,20 @@ impl Browse {
 
             for (unit, values) in student_enrolments.value().as_object().unwrap() {
                 for group in values.get("groups").unwrap().as_object().unwrap().keys() {
-                    let request = &Browse::get_request(session.clone(), unit, group);
-                    data.merge(self.driver.execute_script(request).await?.value().to_owned());
+                    let activities_request = Browse::get_request(&session, "activities", unit, group);
+                    let mut activities_result = self.driver.execute_script(&activities_request).await?.value().to_owned();
+
+                    let popularities_request = Browse::get_request(&session, "popularities", unit, group);
+                    let popularities_result = self.driver.execute_script(&popularities_request).await?.value().to_owned();
+
+                    let filter_popularities = |(key, _): &(&String, &Value)| key.contains("activity");
+                    let popularities: Vec<(&String, &Value)> = popularities_result.as_object().unwrap().iter().filter(filter_popularities).collect();
+
+                    for ((_, values), (_, popularity)) in activities_result.as_object_mut().unwrap().iter_mut().zip(popularities) {
+                        values["popularity"] = serde_json::Value::String(popularity.to_owned().get("popularity").unwrap().to_owned().to_string());
+                    }
+
+                    data.merge(activities_result);
                 }
             }
 

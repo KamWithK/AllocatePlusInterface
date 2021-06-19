@@ -57,7 +57,7 @@ impl Activity {
         // Create activity
         Activity {
             days: days,
-            popularity: 0.
+            popularity: values.get("popularity").unwrap().as_f64().unwrap()
         }
     }
 }
