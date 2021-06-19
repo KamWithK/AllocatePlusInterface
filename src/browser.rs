@@ -41,9 +41,8 @@ impl Browse {
 
             for (unit, values) in student_enrolments.value().as_object().unwrap() {
                 for group in values.get("groups").unwrap().as_object().unwrap().keys() {
-                    let hash = md5::compute(format!("{}{}", unit, group));
-                    self.driver.execute_script(&format!("showGroup('{:x}')", hash)).await?;
-                    sleep(Duration::from_millis(100)).await;
+                    self.driver.execute_script(&format!("refreshActivityGroup('{}', '{}', false, true)", unit, group)).await?;
+                    sleep(Duration::from_millis(10)).await;
                 }
             }
 
