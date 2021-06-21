@@ -1,10 +1,11 @@
 mod browser;
 mod parser;
+mod scheduler;
 
 use std::path::PathBuf;
 use thirtyfour::prelude::{DesiredCapabilities, WebDriverResult};
 use browser::Browse;
-use parser::parse;
+use parser::{Group, Activity, parse};
 
 #[tokio::main]
 async fn main() -> WebDriverResult<()> {
@@ -20,8 +21,12 @@ async fn main() -> WebDriverResult<()> {
 
     let raw_data = browser.get_data(session).await?;
     browser.driver.quit().await?;
-    parse(raw_data, "S2-01");
 
+    let units = parse(raw_data, "S2-01");
+    let groups: Vec<&Group> = units.iter().flat_map(|unit| &unit.groups).collect();
+    let activities: Vec<&Activity> = groups.iter().flat_map(|group| &group.activities).collect();
+
+    Activity::get_collisions(activities.as_slice(), 15, 6, 11);
 
     Ok(())
 }
