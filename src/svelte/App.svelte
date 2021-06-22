@@ -22,7 +22,9 @@
 	main{
 		display: flex;
 		flex-direction: row;
-		gap: 12px;
+		align-items: flex-start;
+		gap: 16px;
+		justify-content: space-around;
 		margin: 5px;
 	}
 </style>
