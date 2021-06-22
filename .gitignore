@@ -9,3 +9,8 @@ Cargo.lock
 
 **chromedriver*
 **geckodriver*
+
+/node_modules/
+/public/build/
+
+.DS_Store
