@@ -1,6 +1,5 @@
 use serde::ser::Serialize;
 use serde_json::value::Value;
-use json_value_merge::Merge;
 use thirtyfour::prelude::*;
 use std::time::Duration;
 use thirtyfour::support::sleep;
@@ -50,13 +49,28 @@ impl Browse {
         }
     }
 
-    fn get_request(session: &SessionInfo, field: &str, unit: &str, group: &str) -> String {
+    async fn query(driver: &WebDriver, session: &SessionInfo, field: &str, unit: &str, group: &str) -> Value {
         let url = format!(
             "rest/student/{}/subject/{}/group/{}/{}/?ss={}",
             session.student_number, unit, group, field, session.session_ss
         );
 
-        format!("return await (await fetch('{}')).json()", url)
+        let request = format!("return await (await fetch('{}')).json()", url);
+        driver.execute_script(&request).await.unwrap().value().to_owned()
+    }
+
+    async fn get_activity(driver: &WebDriver, session: &SessionInfo, unit: &str, group: &str) -> Value {
+        let mut activities_result = Browse::query(driver, session, "activities", unit, group).await;
+        let popularities_result = Browse::query(driver, session, "popularities", unit, group).await;
+
+        let filter_popularities = |(key, _): &(&String, &Value)| key.contains("activity");
+        let popularities: Vec<(&String, &Value)> = popularities_result.as_object().unwrap().iter().filter(filter_popularities).collect();
+
+        for ((_, values), (_, popularity)) in activities_result.as_object_mut().unwrap().iter_mut().zip(popularities) {
+            values["popularity"] = serde_json::Value::String(popularity.to_owned().get("popularity").unwrap().to_owned().to_string());
+        }
+
+        activities_result
     }
 
     pub async fn get_data(&self, session: SessionInfo) -> WebDriverResult<Value> {
@@ -70,21 +84,13 @@ impl Browse {
             let mut data = Value::default();
 
             for (unit, values) in student_enrolments.value().as_object().unwrap() {
+                data[unit] = Value::default();
+                data[unit]["semester"] = values.get("semester").unwrap().to_owned();
+
                 for group in values.get("groups").unwrap().as_object().unwrap().keys() {
-                    let activities_request = Browse::get_request(&session, "activities", unit, group);
-                    let mut activities_result = self.driver.execute_script(&activities_request).await?.value().to_owned();
-
-                    let popularities_request = Browse::get_request(&session, "popularities", unit, group);
-                    let popularities_result = self.driver.execute_script(&popularities_request).await?.value().to_owned();
-
-                    let filter_popularities = |(key, _): &(&String, &Value)| key.contains("activity");
-                    let popularities: Vec<(&String, &Value)> = popularities_result.as_object().unwrap().iter().filter(filter_popularities).collect();
-
-                    for ((_, values), (_, popularity)) in activities_result.as_object_mut().unwrap().iter_mut().zip(popularities) {
-                        values["popularity"] = serde_json::Value::String(popularity.to_owned().get("popularity").unwrap().to_owned().to_string());
-                    }
-
-                    data.merge(activities_result);
+                    data[unit]["groups"] = Value::default();
+                    data[unit]["groups"][group] = Value::default();
+                    data[unit]["groups"][group]["activities"] = Browse::get_activity(&self.driver, &session, unit, group).await;
                 }
             }
 

@@ -28,7 +28,7 @@ impl Timeblock {
 
     // Return true when there is a collision
     pub fn check_collision(&self, other: &Timeblock) -> bool {
-        self.start <= other.end && self.end >= other.start
+        self.start < other.end && self.end > other.start
     }
 
     pub fn check_collisions(&self, others: &[Timeblock]) -> Vec<bool> {
@@ -67,7 +67,7 @@ impl Day {
 impl Week {
     pub fn from_frequency(frequency: usize, start: u32, end: u32) -> Week {
         let get_day = |day| Day::from_frequency(frequency, start, end, day);
-        let days = (1..5).map(get_day).collect();
+        let days = (1..6).map(get_day).collect();
 
         Week {
             days
