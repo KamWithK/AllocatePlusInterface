@@ -1,7 +1,7 @@
 <script>
     let days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-    let times = ["7:00","7:30","8:00", "8:30", "9:00", "9:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "1:00", "1:30", "2:00", "2:30", "3:00", "3:30", "4:00", "4:30", "5:00", "5:30", "6:00", "6:30", "7:00", "7:30", "8:00", "8:30", 
-    "9:00", "9:30", "10:00"]
+    let times = ["7am","","8am", "", "9am", "", "10am", "", "11am", "", "12pm", "", "1pm", "", "2pm", "", "3pm", "", "4pm", "", "5pm", "", "6pm", "", "7pm", "", "8pm", "", 
+    "9pm", "", "10pm"]
 </script>
 
 <table>
@@ -18,6 +18,9 @@
     {#each times as time}
         <tr>
             <th class = "times">{time}</th>
+            {#each days as day}
+                <td></td>
+            {/each}
         </tr>
     {/each}
 </table>
@@ -25,18 +28,20 @@
 <style>
     table{
         table-layout:fixed;
+        border-collapse: collapse;
         width: 100%;
         background: #d8fcfd;
         box-shadow: 0.3px 0.3px 15px #C5E5E6, -0.3px -0.3px 15px #EBFFFF;
     }
 
     .times{
-        width: 10%;
+        width: 50px;
+        height: 20px;
         text-align: center;
     }
 
-    tr, th {
-        border: black solid;
+    tr, th, td {
+        border: solid black;
     }
 
     
