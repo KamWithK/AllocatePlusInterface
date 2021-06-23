@@ -6,10 +6,8 @@
 		let username = event.detail["username"];
 		let password = event.detail["password"];
 		let authenticate = event.detail["authenticate"];
-		console.log(username, password, authenticate);
 		let response = await fetch(`/api/login?username=${username}&password=${password}&auth_key=${authenticate}`);
 		let result = await response.json();
-		console.log(result)
 	}
 </script>
 
