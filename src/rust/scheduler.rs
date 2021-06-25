@@ -3,8 +3,10 @@ use std::convert::TryInto;
 use chrono::{NaiveDateTime, NaiveDate, NaiveTime, Duration};
 use std::clone::Clone;
 use std::marker::Copy;
+use serde::{Serialize, Deserialize};
 
 #[derive(Copy, Clone)]
+#[derive(Serialize, Deserialize)]
 pub struct Timeblock {
     pub start: NaiveDateTime,
     pub end: NaiveDateTime

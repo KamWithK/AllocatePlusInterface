@@ -9,7 +9,8 @@ mod scheduler_tests;
 
 use thirtyfour::{ChromeCapabilities, prelude::DesiredCapabilities};
 use browser::Browse;
-use parser::{Group, Activity, parse};
+use parser::{Unit, Group, Activity, parse};
+use serde::{Serialize, Deserialize};
 use rocket::fs::{FileServer, relative};
 use rocket::State;
 use rocket::serde::json::Json;
@@ -17,15 +18,28 @@ use rocket::serde::json::Json;
 pub const SECONDS_TO_MINUTES: usize = 60;
 pub const SECONDS_TO_HOURS: u32 = 60 * 60;
 
-#[get("/login?<username>&<password>&<auth_key>")]
-async fn login(username: &str, password: &str, auth_key: &str, chrome_driver: &State<ChromeCapabilities>) -> Json<Vec<Vec<i64>>> {
+#[derive(Serialize, Deserialize)]
+struct LoginDetails {
+    pub username: String,
+    pub password: String,
+    pub auth_key: String
+}
+
+#[post("/login", data="<login_details>")]
+async fn login(login_details: Json<LoginDetails>, chrome_driver: &State<ChromeCapabilities>) -> Json<Vec<Unit>> {
     let browser = Browse::build_browser(chrome_driver.inner()).await;
-    let session = browser.login(&username, &password, &auth_key).await.unwrap();
+    let session = browser.login(&login_details.username, &login_details.password, &login_details.auth_key).await.unwrap();
 
     let raw_data = browser.get_data(session).await.unwrap();
     browser.driver.quit().await.unwrap();
     
     let units = parse(raw_data, "S2-01");
+
+    Json(units)
+}
+
+#[post("/collisions", data="<units>")]
+async fn collisions(units: Json<Vec<Unit>>) -> Json<Vec<Vec<i64>>> {
     let groups: Vec<&Group> = units.iter().flat_map(|unit| &unit.groups).collect();
     let activities: Vec<&Activity> = groups.iter().flat_map(|group| &group.activities).collect();
 
@@ -42,6 +56,6 @@ fn rocket() -> _ {
 
     rocket::build()
         .mount("/", FileServer::from(relative!("public")))
-        .mount("/api", routes![login])
+        .mount("/api", routes![login, collisions])
         .manage(chrome_driver)
 }
