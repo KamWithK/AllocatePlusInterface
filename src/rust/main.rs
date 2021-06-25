@@ -38,7 +38,7 @@ async fn login(login_details: Json<LoginDetails>, chrome_driver: &State<ChromeCa
     Json(units)
 }
 
-#[post("/collisions", data="<units>")]
+#[get("/collisions?<units>")]
 async fn collisions(units: Json<Vec<Unit>>) -> Json<Vec<Vec<i64>>> {
     let groups: Vec<&Group> = units.iter().flat_map(|unit| &unit.groups).collect();
     let activities: Vec<&Activity> = groups.iter().flat_map(|group| &group.activities).collect();
