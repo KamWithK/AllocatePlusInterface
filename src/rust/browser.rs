@@ -26,23 +26,24 @@ impl Browse {
         self.driver.query(By::Id("okta-signin-password")).first().await?.send_keys(password).await?;
         self.driver.query(By::Id("okta-signin-submit")).first().await?.click().await?;
 
-        // Fill in Google authenticator key
-        if auth_key != "" {
+        // Wait to be logged in or to fill in auth key
+        self.driver.query(By::Css("input[type=tel],#enrol-header")).exists().await?;
+
+        // Fill in Google authenticator key if prompted
+        if self.driver.query(By::Css("input[type=tel]")).nowait().exists().await? {
             self.driver.query(By::Css("input[type=tel]")).first().await?.send_keys(auth_key).await?;
             self.driver.query(By::Css("input[type=submit]")).first().await?.click().await?;
         }
 
-        if self.driver.query(By::Id("enrol-header")).exists().await? == false {
-            Err(thirtyfour::error::WebDriverError::RequestFailed("Failed to Login".to_owned()))
-        } else {
-            let student_number = self.driver.execute_script(&"return data.student.student_code").await?.value().to_string();
-            let ss = self.driver.execute_script(&"return ss").await?.value().to_string();
+        // Get data once page loads
+        self.driver.query(By::Id("enrol-header")).exists().await?;
+        let student_number = self.driver.execute_script(&"return data.student.student_code").await?.value().to_string();
+        let ss = self.driver.execute_script(&"return ss").await?.value().to_string();
 
-            Ok(SessionInfo{
-                student_number: student_number.trim_matches('"').to_string(),
-                session_ss: ss.trim_matches('"').to_string()
-            })
-        }
+        Ok(SessionInfo{
+            student_number: student_number.trim_matches('"').to_string(),
+            session_ss: ss.trim_matches('"').to_string()
+        })
     }
 
     async fn query(driver: &WebDriver, session: &SessionInfo, field: &str, unit: &str, group: &str) -> Value {
