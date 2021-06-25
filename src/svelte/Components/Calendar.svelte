@@ -55,11 +55,13 @@
 <style>
     table{
         table-layout:fixed;
+        width: 100%;
+        padding: 20px;
+        border-radius: 20px;
         border-collapse: separate;
         border-spacing: 0;
-        width: 100%;
-        background: #ffffff;
-        box-shadow: 9.91px 9.91px 15px #E8E8E8, -9.91px -9.91px 15px #FFFFFF;
+        background: #d8fcfd;
+        box-shadow: 0.3px 0.3px 15px #C5E5E6, -0.3px -0.3px 15px #EBFFFF;
     }
 
     .times{
@@ -69,7 +71,7 @@
     }
 
     tr, th, td {
-        border: 1px solid rgba(161, 161, 161, 0.3);
+        border: 1px solid rgba(104, 104, 104, 0.171);
         padding: 3px;
     }
 
