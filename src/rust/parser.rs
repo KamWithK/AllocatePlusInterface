@@ -57,7 +57,7 @@ impl Activity {
         let week = values.get("start_time").unwrap().as_str().unwrap();
         let duration = values.get("duration").unwrap().as_str().unwrap().parse().unwrap();
 
-        let popularity = values.get("popularity").unwrap().as_str().unwrap().parse().unwrap();
+        let popularity = values.get("popularity").unwrap_or(&Value::String("0.".to_owned())).as_str().unwrap().parse().unwrap();
 
         let standard_timeblock = Timeblock::from_duration(
             NaiveDateTime::new(

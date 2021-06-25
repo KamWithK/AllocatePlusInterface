@@ -85,10 +85,11 @@ impl Browse {
 
             for (unit, values) in student_enrolments.value().as_object().unwrap() {
                 data[unit] = Value::default();
+                data[unit]["groups"] = Value::default();
+                
                 data[unit]["semester"] = values.get("semester").unwrap().to_owned();
 
                 for group in values.get("groups").unwrap().as_object().unwrap().keys() {
-                    data[unit]["groups"] = Value::default();
                     data[unit]["groups"][group] = Value::default();
                     data[unit]["groups"][group]["activities"] = Browse::get_activity(&self.driver, &session, unit, group).await;
                 }
