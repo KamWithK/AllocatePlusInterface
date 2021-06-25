@@ -68,10 +68,6 @@
         text-align: center;
     }
 
-    :nth-child(odd) td{
-        border: 1px solid white;
-    }
-
     tr, th, td {
         border: 1px solid rgba(161, 161, 161, 0.3);
         padding: 3px;
