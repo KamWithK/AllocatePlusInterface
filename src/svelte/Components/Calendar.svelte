@@ -20,7 +20,11 @@
         var opacity = 0;
         let collisionCellRange = [...Array(collisionCell).keys()]
         for (const _ in collisionCellRange){
-            opacity += 0.2
+            if (opacity <= 1){
+                opacity += 0.2
+            } else {
+                break;
+            }
         }
         return opacity;
     }
@@ -40,7 +44,7 @@
         <tr>
             <th class = "times">{time}</th>
             {#each days as day}
-                <td></td>
+                <td class = "times"></td>
             {/each}
         </tr>
     {/each}
@@ -62,6 +66,10 @@
         width: 50px;
         height: 20px;
         text-align: center;
+    }
+
+    :nth-child(odd) td{
+        border: 1px solid white;
     }
 
     tr, th, td {
