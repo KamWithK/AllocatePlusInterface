@@ -55,9 +55,8 @@ impl Activity {
     
         let to_date = |value: &Value| NaiveDateTime::parse_from_str(&format!("{}-{}", value.as_str().unwrap(), time), "%d/%m/%Y-%H:%M").unwrap();
         let days: Vec<NaiveDateTime> = days.iter().map(to_date).collect();
-        let duration = Duration::seconds(values.get("duration").unwrap().as_str().unwrap().parse().unwrap());
+        let duration = Duration::minutes(values.get("duration").unwrap().as_str().unwrap().parse().unwrap());
 
-        
         // Ensure only day and time change
         let standard_start = NaiveDateTime::new(
             NaiveDate::from_weekday_of_month(1, 1, values.get("day_of_week").unwrap().as_str().unwrap().parse().unwrap(), 1),
