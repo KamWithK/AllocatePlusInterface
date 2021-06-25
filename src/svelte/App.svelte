@@ -15,10 +15,7 @@
 
 		console.log(units_result);
 
-		let collisions_response = await fetch("/api/collisions", {
-			method: "POST",
-			body: JSON.stringify(units_result)
-		});
+		let collisions_response = await fetch(`/api/collisions?units=${JSON.stringify(units_result)}`);
 		let collisions_result = await collisions_response.json();
 
 		console.log(collisions_result);

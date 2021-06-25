@@ -17,7 +17,6 @@ pub struct Group {
 
 #[derive(Serialize, Deserialize)]
 pub struct Activity {
-    pub days: Vec<NaiveDateTime>,
     pub standard_timeblock: Timeblock,
     pub popularity: f64
 }
@@ -53,25 +52,25 @@ impl Group {
 
 impl Activity {
     pub fn parse_activity(values: Value) -> Activity {
-        // Parse dates and times
-        let days = values.get("activitiesDays").unwrap().as_array().unwrap();
-        let time = values.get("start_time").unwrap().as_str().unwrap();
-    
-        let to_date = |value: &Value| NaiveDateTime::parse_from_str(&format!("{}-{}", value.as_str().unwrap(), time), "%d/%m/%Y-%H:%M").unwrap();
-        let days: Vec<NaiveDateTime> = days.iter().map(to_date).collect();
-        let duration = Duration::minutes(values.get("duration").unwrap().as_str().unwrap().parse().unwrap());
+        // Get attributes
+        let day = values.get("day_of_week").unwrap().as_str().unwrap().parse().unwrap();
+        let week = values.get("start_time").unwrap().as_str().unwrap();
+        let duration = values.get("duration").unwrap().as_str().unwrap().parse().unwrap();
 
-        // Ensure only day and time change
-        let standard_start = NaiveDateTime::new(
-            NaiveDate::from_weekday_of_month(1, 1, values.get("day_of_week").unwrap().as_str().unwrap().parse().unwrap(), 1),
-            NaiveTime::parse_from_str(values.get("start_time").unwrap().as_str().unwrap(), &"%H:%M").unwrap()
+        let popularity = values.get("popularity").unwrap().as_str().unwrap().parse().unwrap();
+
+        let standard_timeblock = Timeblock::from_duration(
+            NaiveDateTime::new(
+                NaiveDate::from_weekday_of_month(1, 1, day, 1),
+                NaiveTime::parse_from_str(week, &"%H:%M").unwrap()
+            ),
+            Duration::minutes(duration)
         );
     
         // Create activity
         Activity {
-            days: days,
-            standard_timeblock: Timeblock::from_duration(standard_start, duration),
-            popularity: values.get("popularity").unwrap().as_str().unwrap().parse().unwrap()
+            standard_timeblock,
+            popularity
         }
     }
 
