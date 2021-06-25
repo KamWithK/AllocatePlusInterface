@@ -1,8 +1,6 @@
 use serde::ser::Serialize;
 use serde_json::value::Value;
 use thirtyfour::prelude::*;
-use std::time::Duration;
-use thirtyfour::support::sleep;
 
 pub struct Browse {
     pub driver: WebDriver
@@ -23,12 +21,10 @@ impl Browse {
     pub async fn login(&self, username: &str, password: &str, auth_key: &str) -> WebDriverResult<SessionInfo> {
         self.driver.get("https://my-timetable.monash.edu/odd/student").await?;
 
-        sleep(Duration::from_millis(500)).await;
-
         // Fill in username and password
-        self.driver.find_element(By::Id("okta-signin-username")).await?.send_keys(username).await?;
-        self.driver.find_element(By::Id("okta-signin-password")).await?.send_keys(password).await?;
-        self.driver.find_element(By::Id("okta-signin-submit")).await?.click().await?;
+        self.driver.query(By::Id("okta-signin-username")).first().await?.send_keys(username).await?;
+        self.driver.query(By::Id("okta-signin-password")).first().await?.send_keys(password).await?;
+        self.driver.query(By::Id("okta-signin-submit")).first().await?.click().await?;
 
         // Fill in Google authenticator key
         if auth_key != "" {
@@ -86,7 +82,7 @@ impl Browse {
             for (unit, values) in student_enrolments.value().as_object().unwrap() {
                 data[unit] = Value::default();
                 data[unit]["groups"] = Value::default();
-                
+
                 data[unit]["semester"] = values.get("semester").unwrap().to_owned();
 
                 for group in values.get("groups").unwrap().as_object().unwrap().keys() {
