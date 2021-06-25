@@ -1,17 +1,21 @@
 use chrono::{NaiveDateTime, NaiveDate, NaiveTime, Duration};
+use serde::{Serialize, Deserialize};
 use serde_json::value::Value;
 use crate::scheduler::{Timeblock, Week};
 
+#[derive(Serialize, Deserialize)]
 pub struct Unit {
     pub name: String,
     pub groups: Vec<Group>
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct Group {
     pub name: String,
     pub activities: Vec<Activity>
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct Activity {
     pub days: Vec<NaiveDateTime>,
     pub standard_timeblock: Timeblock,
