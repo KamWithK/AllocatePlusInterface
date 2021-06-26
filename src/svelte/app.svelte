@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Calendar from "./Components/Calendar.svelte";
-	import Login from "./Components/Login.svelte"
+	import Calendar from "./components/calendar.svelte";
+	import Login from "./components/login.svelte";
 
 	async function handleLoginInfo(event) {
 		let username = event.detail["username"];
@@ -27,7 +27,11 @@
 	<Calendar/>
 </main>
 
-<style>
+<style global>
+	@tailwind base;
+	@tailwind components;
+	@tailwind utilities;
+
 	main{
 		display: flex;
 		flex-direction: row;
