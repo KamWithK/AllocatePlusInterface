@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Calendar from "./components/calendar.svelte";
-	import Login from "./components/login.svelte";
+	import Filter from "./components/filter.svelte";
+	import Login from "./components/login.svelte"
 
 	async function handleLoginInfo(event) {
 		let username = event.detail["username"];
@@ -23,8 +24,9 @@
 </script>
 
 <main>
-	<Login on:handleLoginInfo={handleLoginInfo}/>
+	<Login on:handleLoginInfo={handleLoginInfo} />
 	<Calendar/>
+	<Filter/>
 </main>
 
 <style global>
@@ -40,4 +42,5 @@
 		justify-content: space-around;
 		margin: 5px;
 	}
+
 </style>

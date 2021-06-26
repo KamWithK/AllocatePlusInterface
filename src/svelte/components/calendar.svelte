@@ -11,7 +11,7 @@
 
         for (var x= 1; x < noCols; x++) {
             for (var y = 1; y < noRows; y++){
-                table.rows[y].cells[x].style.backgroundColor = 'rgba(' + 15 + ',' + 255 + ',' + 255 + ',' + generateOpacity(collisions[x-1][y-1]) + ')';
+                table.rows[y].cells[x].style.backgroundColor = 'rgba(' + 20 + ',' + 70 + ',' + 200 + ',' + generateOpacity(collisions[x-1][y-1]) + ')';
             }
         }
     }
