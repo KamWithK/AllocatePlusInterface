@@ -5,14 +5,16 @@ import Option from "../props/option.svelte";
 </script>
 
 {#each units as unit}
-     <label for = {unit.name}>{unit.name}</label>
-     <select>
-        {#each unit.groups as group}
+    <label class="text-xl" for={unit.name}>{unit.name.split("_")[0]}</label>
+    {#each unit.groups as group}
+        <label class="text-lg" for={group.name}>{group.name}</label>
+
+        <select class="mb-2">
             {#each group.activities as activity}
                 <Option {activity}></Option>
             {/each}
-        {/each}
-    </select>
+        </select>
+    {/each}
  {/each}
 
 <style>

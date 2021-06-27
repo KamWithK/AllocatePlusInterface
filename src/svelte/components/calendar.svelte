@@ -5,79 +5,54 @@
     let collisions = [[0,0,0,0,0,0,1,1,1,1,1,1,1,1,3,3,4,4,4,4,6,6,3,3,3,3,0,0,0,0],[0,0,3,3,3,3,4,4,5,5,4,4,3,3,3,3,5,5,5,5,6,6,3,3,2,2,0,0,0,0],[0,0,3,3,3,3,2,2,2,2,4,4,4,4,2,2,4,4,5,5,7,7,6,6,6,6,0,0,0,0],[0,0,2,2,2,2,3,3,3,3,3,3,3,3,1,1,3,3,3,3,5,5,5,5,3,3,1,1,0,0],[0,0,1,1,3,3,2,2,3,3,4,4,3,3,4,4,4,4,2,2,2,2,0,0,0,0,0,0,0,0]]
 
     function buildTable(collisions){
-        var table = document.getElementById("myTable")
+        var table = document.getElementById("calendar")
         var noRows = table.rows.length
         var noCols = table.rows[0].cells.length
 
         for (var x= 1; x < noCols; x++) {
             for (var y = 1; y < noRows; y++){
-                table.rows[y].cells[x].style.backgroundColor = 'rgba(' + 20 + ',' + 70 + ',' + 200 + ',' + generateOpacity(collisions[x-1][y-1]) + ')';
+                table.rows[y].cells[x].style.backgroundColor = "rgba(" + 20 + "," + 70 + "," + 200 + "," + generateOpacity(collisions[x-1][y-1]) + ")";
             }
         }
     }
 
-    function generateOpacity(collisionCell){
+    function generateOpacity(collision_cell){
         var opacity = 0;
-        let collisionCellRange = [...Array(collisionCell).keys()]
-        for (const _ in collisionCellRange){
+        let collision_cell_range = [...Array(collision_cell).keys()]
+        for (const _ in collision_cell_range){
             if (opacity <= 1){
                 opacity += 0.2
             } else {
                 break;
             }
         }
+
         return opacity;
     }
 </script>
 
-<table id = "myTable">
+<table id="calendar">
     <!-- Heading for days -->
     <tr>
         <!-- Empty cell for times column -->
-        <th class = "times"></th>
+        <th width=50px class="times text-base font-normal"></th>
         {#each days as day}
-            <th>{day}</th>
+            <th class="border">{day}</th>
         {/each}
     </tr>
-        <!-- Heading for times -->
+
+    <!-- Heading for times -->
     {#each times as time}
         <tr>
-            <th class = "times">{time}</th>
-            {#each days as day}
-                <td class = "times"></td>
+            <th class="border text-base font-normal">{time}</th>
+            {#each days as _}
+                <td class="border">&#8193‎</td>
             {/each}
         </tr>
     {/each}
 </table>
 
-<button on:click={() => buildTable(collisions)}>Build Table</button>
+<button on:click={() => buildTable(collisions)} class="m-2">Build Table</button>
 
 <style>
-    table{
-        table-layout:fixed;
-        width: 100%;
-        padding: 20px;
-        border-radius: 20px;
-        border-collapse: separate;
-        border-spacing: 0;
-        background: #d8fcfd;
-        box-shadow: 0.3px 0.3px 15px #C5E5E6, -0.3px -0.3px 15px #EBFFFF;
-    }
-
-    .times{
-        width: 50px;
-        height: 20px;
-        text-align: center;
-    }
-
-    tr, th, td {
-        border: 1px solid rgba(104, 104, 104, 0.171);
-        padding: 3px;
-    }
-
-    th {
-        font-weight: normal;
-    }
-
-    
 </style>

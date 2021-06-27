@@ -24,23 +24,20 @@
 </script>
 
 <main>
-	<Login on:handleLoginInfo={handleLoginInfo} />
-	<Calendar/>
-	<Filter/>
+	<div class="flex flex-auto">
+		<div class="p-4 rounded-lg bg-indigo-500 bg-opacity-80 border-8 border-fuchsia-600 border-opacity-15">
+			<Login on:handleLoginInfo={handleLoginInfo}/>
+			<Filter/>
+		</div>
+		<div class="flex flex-col flex-grow m-4">
+			<h1 class="self-center font-serif text-xl font-semibold text-blue-500 italic">Allocate Plus Plus</h1>
+			<Calendar/>
+		</div>
+	</div>
 </main>
 
 <style global>
 	@tailwind base;
 	@tailwind components;
 	@tailwind utilities;
-
-	main{
-		display: flex;
-		flex-direction: row;
-		align-items: flex-start;
-		gap: 16px;
-		justify-content: space-around;
-		margin: 5px;
-	}
-
 </style>

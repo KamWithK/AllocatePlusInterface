@@ -1,9 +1,18 @@
 <script>
     export let activity
-    let startTime = activity.standard_timeblock.start
-    let endTime = activity.standard_timeblock.end
+
+    let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+    let start = new Date(activity.standard_timeblock.start)
+    let end = new Date(activity.standard_timeblock.end)
+
+    let day = days[start.getDay()]
+    let start_time = start.getHours() + ":" + start.getMinutes()
+    let end_time = end.getHours() + ":" + end.getMinutes()
 </script>
 
-<option activity = {activity}>{startTime}-{endTime}</option>
+<option activity={activity}>
+    {day} {start_time}-{end_time}
+</option>
 
 <style></style>

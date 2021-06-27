@@ -1,8 +1,8 @@
 <script>
-
     import {createEventDispatcher} from "svelte";
 
     let dispatch = createEventDispatcher();
+    
     let username;
     let password;
     let authenticate;
@@ -14,65 +14,27 @@
             password: password,
             authenticate: authenticate
         }
+
         dispatch("handleLoginInfo", loginInfo);
     }
 </script>
 
 <!-- Handles login input from user -->
 <form on:submit|preventDefault={handleSubmit}>
-    <h1>Login</h1>
-    <div class = "group">
-        <input type = "text" placeholder="Username" bind:value={username}>
-    </div>
+    <div class="flex flex-col gap-1 items-center">
+        <h1 class="font-sans mb-2">Login</h1>
 
-    <div class = "group">
-        <input type = "password" placeholder="Password" bind:value={password}>
-    </div>
+        <input type="text" placeholder="Username" bind:value={username}>
+        <input type="password" placeholder="Password" bind:value={password}>
+        <input type="number" placeholder="Authenticate Key" bind:value={authenticate} class="mt-2">
 
-    <div class = "group">
-        <input type = "number" placeholder = "Authenticate Key" bind:value={authenticate}>
+        <button class="w-1/2 rounded-full bg-purple-700 text-white border-4 hover:border-fuchsia-600">Login</button>
     </div>
-    <button>Login</button>
 </form>
 
-<style>
-    form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 40px;
-        width: fit-content;
-        border-radius: 20px;
-        background: #d8fcfd;
-        box-shadow: 0.3px 0.3px 15px #C5E5E6, -0.3px -0.3px 15px #EBFFFF;
-    }
-
+<style global>    
     input {
-        border: 0px none;
-        outline: none;
-        margin: 10px;
-        padding: 15px;
-        border-radius: 20px;
-        width: fit-content;
-        background: #d8fcfd;
-        box-shadow: 0.3px 0.3px 15px #C5E5E6, -0.3px -0.3px 15px #EBFFFF;
-    }
-
-    button {
-        margin: 10px;
-        padding: 10px;
-        font-weight: bold;
-        width: 40%;
-        border-radius: 20px;
-        border: 0px none;
-        background: #d8fcfd;
-        box-shadow: 0.3px 0.3px 15px #C5E5E6, -0.3px -0.3px 15px #EBFFFF;
-    }
-
-    input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
+        @apply border-blue-500;
     }
 
     input[type=number] {
